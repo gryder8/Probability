@@ -7,9 +7,15 @@ import java.text.DecimalFormat;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
+//TODO: Double chec results
+//TODO: Bug testing
 
 
 public class Main {
+    public static Scanner globalScan = new Scanner (System.in);
+    public static double p;
+    public static double q;
+    public static double biProbResult = 0;
     private static double result;
     private static double n;
     private static double X;
@@ -24,7 +30,7 @@ public class Main {
         if(c == 1) {
             probability();
         } else if (c==2) {
-            biProbForm();
+            nCrExecution();
         } else {
             System.out.println("Invalid option.");
             choice();
@@ -97,36 +103,116 @@ public class Main {
     }
 
     private static void nCrExecution () {
+        String localInput;
         Scanner sc = new Scanner(System.in);
-        System.out.println("Input n:");
-        n = sc.nextDouble();
-        System.out.println("Input X:");
-        X = sc.nextDouble();
-        result = nCr(n,X);
+        System.out.println("Using at least? y/n");
+        localInput = sc.next();
+        if (localInput.equals("y")) {
+            atLeast();
+        } else if (localInput.equalsIgnoreCase("n")) {
+            System.out.println("Using no more than? y/n");
+            localInput = sc.next();
+                if (localInput.equalsIgnoreCase("y")) {
+                    noMoreThan();
+                } else if (localInput.equalsIgnoreCase("n")){
+                    System.out.println("Input n:");
+                    n = sc.nextDouble();
+                    if (n*1!=n) {
+                        nCrExecution();
+                    }
+                    System.out.println("Input X:");
+                    X = sc.nextDouble();
+                    if (X*1!=X) {
+                        nCrExecution();
+                    }
+                    System.out.println("Input p (as a decimal):");
+                    p = globalScan.nextDouble();
+                    if (p*1!=p) {
+                        nCrExecution();
+                    }
+                    q = 1-p;
+                    result = nCr(n,X);
+                    biProbFormEz();
+                } else {
+                    System.out.println("Invalid input");
+                    nCrExecution();
+                }
+        } else {
+            System.out.println("Invalid input");
+            nCrExecution();
+        }
+
         //System.out.println("Result of "+n+" C "+X+" is "+result);
     }
 
-    private static double  biProbForm(){
-        //System.out.println("The Binomial Probability Formula");
-        nCrExecution();
-        Scanner scan = new Scanner(System.in);
-        System.out.println("Input p (as a decimal):");
-        double p = scan.nextDouble();
-        //System.out.println("Input q (as a decimal)");
-        //double q = scan.nextDouble();
-        //System.out.println(df.format(p));
-        double q = 1-p;
-        double biProbResult = (result)*(Math.pow(p,X))*(Math.pow(q, n-X));
-        if(biProbResult<=1) {
+    private static double  biProbFormEz(){
+        //Scanner scan = new Scanner(System.in);
+        biProbResult = biProbResult + (result)*(Math.pow(p,X))*(Math.pow(q, n-X));
+        //if(biProbResult<=1) {
             System.out.println("The result is: " + df.format(biProbResult));
-        } else {
+        /*} else {
             System.out.println("Invalid inputs. Please try again");
             biProbForm();
-        }
+        }*/
+
         System.out.println("");
         choice();
         return biProbResult;
     }
+    private static void atLeast() {
+        System.out.println("n is at least:");
+        n = globalScan.nextDouble();
+        if (n*1!=n){
+            atLeast();
+        }
+        System.out.println("Input X:");
+        X = globalScan.nextDouble();
+        if (X*1!=X){
+            atLeast();
+        }
+        System.out.println("Input p (as a decimal):");
+        p = globalScan.nextDouble();
+        if (p*1!=p) {
+            atLeast();
+        }
+        q = 1-p;
+        result = nCr(n,X);
+        biProbResult = biProbResult + (result)*(Math.pow(p,X))*(Math.pow(q, n-X));
+        for (int i = 1; i<Math.abs(X-n); i++) {
+            biProbResult = biProbResult + (result)*(Math.pow(p,X))*(Math.pow(q, n+i-X));
+        }
+        System.out.println("The result is: " + df.format(biProbResult));
+        System.out.println("");
+        choice();
+    }
+
+    private static void noMoreThan() {
+        System.out.println("n is no more than:");
+        n = globalScan.nextDouble();
+        if (n*1!=n){
+            noMoreThan();
+        }
+        System.out.println("Input X:");
+        X = globalScan.nextDouble();
+        if (X*1!=X){
+            noMoreThan();
+        }
+        System.out.println("Input p (as a decimal):");
+        p = globalScan.nextDouble();
+        if (p*1!=p) {
+            noMoreThan();
+        }
+        q = 1-p;
+        result = nCr(n,X);
+        biProbResult = biProbResult + (result)*(Math.pow(p,X))*(Math.pow(q, n-X));
+        for (int i = (int)n-1; i>0; i--) {
+            biProbResult = biProbResult + (result)*(Math.pow(p,X))*(Math.pow(q, n+i-X));
+        }
+        System.out.println("The result is: " + df.format(biProbResult));
+        System.out.println("");
+        choice();
+    }
+
     public static void main(String[] args) {
         choice();
     }
