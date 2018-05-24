@@ -7,7 +7,7 @@ import java.text.DecimalFormat;
 import java.util.Scanner;
 import java.util.concurrent.ThreadLocalRandom;
 
-//TODO: Double chec results
+//TODO: Double check results
 //TODO: Bug testing
 
 
